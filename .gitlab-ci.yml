@@ -1,0 +1,23 @@
+image: node:11-alpine
+
+stages:
+  - build
+
+compile:
+  stage: build
+  script:
+    - npm install
+    - npm run build
+    - 'which ssh-agent || ( apk update && apk add openssh )'
+    - mkdir -p ~/.ssh
+    - 'echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+    - 'echo -e "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa'
+    - chmod 600 ~/.ssh/id_rsa
+    - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+    - ssh root@192.168.245.71 "cd /opt/docker/FRRUZW2 && docker-compose stop && rm -rf /opt/service/frruz_web2/*"
+    - scp -r $CI_PROJECT_DIR/* root@192.168.245.71:/opt/service/frruz_web2/
+    - ssh root@192.168.245.71 "cd /opt/docker/FRRUZW2 && docker-compose start"
+
+  artifacts:
+    paths:
+      - $CI_PROJECT_DIR/src/*

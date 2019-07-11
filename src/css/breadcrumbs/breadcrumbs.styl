@@ -1,0 +1,26 @@
+.breadcrumb
+  border #e5e5e5 1px solid
+  background none
+
+  a:link
+  a:visited
+      text-decoration underline
+      color #21a649
+
+  a:hover
+      text-decoration underline
+      color #46c765
+
+
+  &-item + &-item::before
+    font-family 'FontAwesome'
+    content " \f105" !important
+
+
+@media (max-width: 600px) {
+  .breadcrumb {
+    font-size: 0.7em;}
+
+}
+
+
